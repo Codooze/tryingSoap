@@ -49,23 +49,22 @@ public class TrayingSoapApplication {
 	}
 
 	private static Double calculateResult(String operation, CalculatorService service, double num1, double num2) {
-		switch (operation) {
-			case "+":
-				return service.add(num1, num2);
-			case "-":
-				return service.subtract(num1, num2);
-			case "*":
-				return service.multiply(num1, num2);
-			case "/":
-				if (num2 == 0) {
-					System.out.println("Error: Division by zero is not allowed.");
-					return null;
-				}
-				return service.divide(num1, num2);
-			default:
-				System.out.println("Error: Invalid operation.");
-				return getUserInputAndCalculate(new Scanner(System.in), service);
-		}
+        return switch (operation) {
+            case "+" -> service.add(num1, num2);
+            case "-" -> service.subtract(num1, num2);
+            case "*" -> service.multiply(num1, num2);
+            case "/" -> {
+                if (num2 == 0) {
+                    System.out.println("Error: Division by zero is not allowed.");
+                    yield null; //yield is like return, but for switch statements
+                }
+                yield service.divide(num1, num2);
+            }
+            default -> {
+                System.out.println("Error: Invalid operation.");
+                yield getUserInputAndCalculate(new Scanner(System.in), service);
+            }
+        };
 	}
 
 	private static boolean askToContinue(Scanner scanner) {
